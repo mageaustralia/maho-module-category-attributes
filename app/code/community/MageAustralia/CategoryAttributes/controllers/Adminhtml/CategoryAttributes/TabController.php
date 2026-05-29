@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 /**
- * MageAustralia_CategoryAttributes — category attribute TABS manager.
+ * MageAustralia_CategoryAttributes - category attribute TABS manager.
  *
  * The Mango "Custom Category Attributes" feature: CRUD over the category default
  * attribute set's eav_attribute_group rows, which Maho renders as the tabs on the
@@ -114,7 +114,7 @@ class MageAustralia_CategoryAttributes_Adminhtml_CategoryAttributes_TabControlle
                 if (!$group) {
                     throw new Mage_Core_Exception($this->__('This tab no longer exists.'));
                 }
-                // Renaming a protected system group is refused — that would
+                // Renaming a protected system group is refused - that would
                 // orphan the tab native attributes expect to render under.
                 if ($helper->isProtectedGroupName((string) $group->getAttributeGroupName())
                     && mb_strtolower($name) !== mb_strtolower((string) $group->getAttributeGroupName())
@@ -130,7 +130,7 @@ class MageAustralia_CategoryAttributes_Adminhtml_CategoryAttributes_TabControlle
                 $setup->addAttributeGroup($helper->getEntityTypeId(), $setId, $name, $sortOrder);
             }
 
-            Mage::app()->cleanCache([Mage_Core_Model_Translate::CACHE_TAG]);
+            Mage::app()->getCacheInstance()->clean([Mage_Core_Model_Translate::CACHE_TAG]);
             Mage::getSingleton('adminhtml/session')->addSuccess($this->__('The tab has been saved.'));
             $this->_redirect('*/*/index');
         } catch (Mage_Core_Exception $e) {
@@ -170,7 +170,7 @@ class MageAustralia_CategoryAttributes_Adminhtml_CategoryAttributes_TabControlle
             }
 
             $helper->getEavSetup()->removeAttributeGroup($helper->getEntityTypeId(), $helper->getDefaultAttributeSetId(), $id);
-            Mage::app()->cleanCache([Mage_Core_Model_Translate::CACHE_TAG]);
+            Mage::app()->getCacheInstance()->clean([Mage_Core_Model_Translate::CACHE_TAG]);
             Mage::getSingleton('adminhtml/session')->addSuccess($this->__('The tab has been deleted.'));
         } catch (Mage_Core_Exception $e) {
             Mage::getSingleton('adminhtml/session')->addError($e->getMessage());

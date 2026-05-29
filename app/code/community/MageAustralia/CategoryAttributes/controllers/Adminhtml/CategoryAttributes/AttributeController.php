@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 /**
- * MageAustralia_CategoryAttributes — category attribute CRUD controller.
+ * MageAustralia_CategoryAttributes - category attribute CRUD controller.
  *
  * Ports the legacy Delta_Deltacats_Adminhtml_Deltacats_DeltacatsController to
  * Maho-modern conventions:
@@ -91,13 +91,13 @@ class MageAustralia_CategoryAttributes_Adminhtml_CategoryAttributes_AttributeCon
     /**
      * Create a new attribute, or update the editable bits of an existing one.
      *
-     * Create: addAttribute('catalog_category', $code, $data) — mirrors the
+     * Create: addAttribute('catalog_category', $code, $data) - mirrors the
      * DeltaCats input-type branches via the helper's buildCreateData(); options
      * for select/multiselect are passed inline as ['option' => ['values'=>...]].
      *
      * Edit: updateAttribute() for label / required / unique / group / sort_order,
      * and option add/remove via addAttributeOption() (the safe AttributeManager
-     * path) — never a generic eav attribute ->save() for options.
+     * path) - never a generic eav attribute ->save() for options.
      */
     #[Maho\Config\Route('/admin/categoryattributes_attribute/save')]
     public function saveAction(): void
@@ -120,7 +120,7 @@ class MageAustralia_CategoryAttributes_Adminhtml_CategoryAttributes_AttributeCon
             }
 
             Mage::getSingleton('adminhtml/session')->addSuccess($this->__('The category attribute has been saved.'));
-            Mage::app()->cleanCache([Mage_Core_Model_Translate::CACHE_TAG]);
+            Mage::app()->getCacheInstance()->clean([Mage_Core_Model_Translate::CACHE_TAG]);
             $this->_redirect('*/*/index');
         } catch (Mage_Core_Exception $e) {
             Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
@@ -194,7 +194,7 @@ class MageAustralia_CategoryAttributes_Adminhtml_CategoryAttributes_AttributeCon
             throw new Mage_Core_Exception($this->__('Please choose a Tab (attribute group) for the attribute.'));
         }
 
-        // Editable bits only — never recreate the attribute or change its code.
+        // Editable bits only - never recreate the attribute or change its code.
         $updateData = [
             'frontend_label'    => (string) $request->getPost('frontend_label', $attribute->getFrontendLabel()),
             'is_required'       => (int) $request->getPost('is_required', 0),
@@ -311,7 +311,7 @@ class MageAustralia_CategoryAttributes_Adminhtml_CategoryAttributes_AttributeCon
             }
 
             $helper->getEavSetup()->removeAttribute($helper->getEntityTypeId(), $id);
-            Mage::app()->cleanCache([Mage_Core_Model_Translate::CACHE_TAG]);
+            Mage::app()->getCacheInstance()->clean([Mage_Core_Model_Translate::CACHE_TAG]);
             Mage::getSingleton('adminhtml/session')->addSuccess($this->__('The category attribute has been deleted.'));
         } catch (Mage_Core_Exception $e) {
             Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
