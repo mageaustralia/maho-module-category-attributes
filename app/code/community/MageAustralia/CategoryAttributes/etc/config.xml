@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Maho
+ *
+ * @package    MageAustralia_CategoryAttributes
+ * @copyright  Copyright (c) 2026 Maho Australia
+ * @license    https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Clean-room replacement for the legacy Delta_Deltacats extension. Lets admins
+ * create and manage custom catalog_category EAV attributes and the category
+ * edit-page tabs (EAV attribute groups) they appear under. Adds dropdown /
+ * multiselect / yes-no support that DeltaCats lacked, plus a tab manager
+ * (create / rename / reposition / delete attribute groups) modelled on the
+ * Mango "Custom Category Attributes" extension.
+ *
+ * Routing is via #[Maho\Config\Route] attributes on the controllers (no
+ * <routers> XML), mirroring Mageaustralia_AttributeManager.
+ */
+-->
+<config>
+    <modules>
+        <MageAustralia_CategoryAttributes>
+            <version>1.0.0</version>
+        </MageAustralia_CategoryAttributes>
+    </modules>
+
+    <global>
+        <helpers>
+            <mageaustralia_categoryattributes>
+                <class>MageAustralia_CategoryAttributes_Helper</class>
+            </mageaustralia_categoryattributes>
+        </helpers>
+        <blocks>
+            <mageaustralia_categoryattributes>
+                <class>MageAustralia_CategoryAttributes_Block</class>
+            </mageaustralia_categoryattributes>
+        </blocks>
+        <models>
+            <mageaustralia_categoryattributes>
+                <class>MageAustralia_CategoryAttributes_Model</class>
+            </mageaustralia_categoryattributes>
+        </models>
+    </global>
+
+    <adminhtml>
+        <layout>
+            <updates>
+                <mageaustralia_categoryattributes>
+                    <file>mageaustralia_categoryattributes.xml</file>
+                </mageaustralia_categoryattributes>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <MageAustralia_CategoryAttributes>
+                    <files>
+                        <default>MageAustralia_CategoryAttributes.csv</default>
+                    </files>
+                </MageAustralia_CategoryAttributes>
+            </modules>
+        </translate>
+    </adminhtml>
+</config>

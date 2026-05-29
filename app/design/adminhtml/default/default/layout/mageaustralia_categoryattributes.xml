@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Maho
+ *
+ * @package    MageAustralia_CategoryAttributes
+ * @copyright  Copyright (c) 2026 Maho Australia
+ * @license    https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<layout>
+    <!-- Category attribute grid -->
+    <adminhtml_categoryattributes_attribute_index>
+        <reference name="content">
+            <block type="mageaustralia_categoryattributes/adminhtml_attribute" name="categoryattributes.attribute.grid.container" />
+        </reference>
+    </adminhtml_categoryattributes_attribute_index>
+
+    <!-- Category attribute add / edit -->
+    <adminhtml_categoryattributes_attribute_edit>
+        <reference name="content">
+            <block type="mageaustralia_categoryattributes/adminhtml_attribute_edit" name="categoryattributes.attribute.edit">
+                <block type="mageaustralia_categoryattributes/adminhtml_attribute_edit_form" name="form" />
+            </block>
+        </reference>
+    </adminhtml_categoryattributes_attribute_edit>
+
+    <!-- Category tabs (groups) grid -->
+    <adminhtml_categoryattributes_tab_index>
+        <reference name="content">
+            <block type="mageaustralia_categoryattributes/adminhtml_tab" name="categoryattributes.tab.grid.container" />
+        </reference>
+    </adminhtml_categoryattributes_tab_index>
+
+    <!-- Category tab add / edit -->
+    <adminhtml_categoryattributes_tab_edit>
+        <reference name="content">
+            <block type="mageaustralia_categoryattributes/adminhtml_tab_edit" name="categoryattributes.tab.edit">
+                <block type="mageaustralia_categoryattributes/adminhtml_tab_edit_form" name="form" />
+            </block>
+        </reference>
+    </adminhtml_categoryattributes_tab_edit>
+</layout>

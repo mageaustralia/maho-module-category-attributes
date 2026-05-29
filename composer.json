@@ -1,0 +1,20 @@
+{
+    "name": "mageaustralia/maho-module-category-attributes",
+    "license": "OSL-3.0",
+    "type": "maho-module",
+    "description": "Admin UI to create and manage custom category attributes for Maho. Add text/textarea/date/yes-no/dropdown/multiselect/image attributes, assign them to category-edit tabs (attribute groups) with a built-in tab manager, manage dropdown/multiselect options in a grid, and have the attributes render on the category edit page under their tab via Maho's native group rendering. Replaces the legacy Delta_Deltacats extension and the Mango \"Custom Category Attributes\" feature set.",
+    "keywords": ["maho", "category", "attribute", "eav", "admin", "tabs", "dropdown"],
+    "authors": [
+        {
+            "name": "Mage Australia",
+            "homepage": "https://mageaustralia.com.au"
+        }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "mahocommerce/maho": "^26.5"
+    },
+    "extra": {
+        "maho-module-dir": "app/code/community/MageAustralia/CategoryAttributes"
+    }
+}

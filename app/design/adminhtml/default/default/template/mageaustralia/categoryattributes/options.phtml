@@ -1,0 +1,204 @@
+<?php
+/**
+ * Maho
+ *
+ * @package    MageAustralia_CategoryAttributes
+ * @copyright  Copyright (c) 2026 Maho Australia
+ * @license    https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Manage Options grid template.
+ *
+ * Renders an editable options grid (Admin + per-store labels, Position,
+ * Is Default, Delete, Add). Field names match what saveAction expects:
+ *   option[value][{id|option_N}][{store_id}]   per-store label
+ *   option[delete][{id}]                        "1" to delete existing
+ *   default[]                                   option ids/keys flagged default
+ *
+ * The whole grid is wrapped in a container that JS shows only for select /
+ * multiselect input types. Vanilla JS only; escapeHtml/escapeUrl only.
+ *
+ * @var MageAustralia_CategoryAttributes_Block_Adminhtml_Attribute_Edit_Options $this
+ */
+$stores      = $this->getStores();
+$rows        = $this->getOptionRows();
+$defaultType = $this->getDefaultInputType();
+$storeIds    = [];
+foreach ($stores as $store) {
+    $storeIds[] = (int) $store->getId();
+}
+?>
+<div id="catattr-options-wrap">
+    <p class="note">
+        <?= $this->escapeHtml($this->__('Define the dropdown / multiselect values. Admin label is required. Tick "Is Default" to pre-select. Only used when the input type is Dropdown or Multiple Select.')) ?>
+    </p>
+    <table class="data data-table" cellspacing="0" id="catattr-options-grid">
+        <thead>
+            <tr>
+                <?php foreach ($stores as $store): ?>
+                    <th><?= $this->escapeHtml($store->getId() == 0 ? $this->__('Admin') : $store->getName()) ?></th>
+                <?php endforeach; ?>
+                <th style="width:70px;"><?= $this->escapeHtml($this->__('Position')) ?></th>
+                <th class="a-center" style="width:70px;"><?= $this->escapeHtml($this->__('Is Default')) ?></th>
+                <th class="a-center" style="width:90px;">
+                    <button type="button" class="scalable add" id="catattr-add-option">
+                        <span><span><span><?= $this->escapeHtml($this->__('Add Option')) ?></span></span></span>
+                    </button>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="catattr-options-body">
+            <?php foreach ($rows as $row): $id = $row['id']; ?>
+            <tr class="catattr-row" data-option-id="<?= $this->escapeHtml((string) $id) ?>">
+                <?php foreach ($stores as $store): $sid = (int) $store->getId(); ?>
+                <td>
+                    <input type="text"
+                           class="input-text<?= $sid === 0 ? ' required-option' : '' ?>"
+                           name="option[value][<?= $this->escapeHtml((string) $id) ?>][<?= $this->escapeHtml((string) $sid) ?>]"
+                           value="<?= $this->escapeHtml((string) ($row['stores'][$sid] ?? '')) ?>" />
+                </td>
+                <?php endforeach; ?>
+                <td class="a-center">
+                    <input type="text" class="input-text catattr-position"
+                           name="option[order][<?= $this->escapeHtml((string) $id) ?>]"
+                           value="<?= $this->escapeHtml((string) $row['sort_order']) ?>" style="width:50px;" />
+                </td>
+                <td class="a-center">
+                    <input type="<?= $this->escapeHtml($defaultType) ?>"
+                           class="catattr-default"
+                           name="default[]"
+                           value="<?= $this->escapeHtml((string) $id) ?>"
+                           <?= $row['is_default'] ? 'checked="checked"' : '' ?> />
+                </td>
+                <td class="a-center">
+                    <input type="hidden" class="catattr-delete-flag" name="option[delete][<?= $this->escapeHtml((string) $id) ?>]" value="" />
+                    <button type="button" class="scalable delete catattr-delete-row">
+                        <span><span><span><?= $this->escapeHtml($this->__('Delete')) ?></span></span></span>
+                    </button>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+(function () {
+    'use strict';
+
+    var STORE_IDS    = <?= Mage::helper('core')->jsonEncode($storeIds) ?>;
+    var DEFAULT_TYPE = <?= Mage::helper('core')->jsonEncode($defaultType) ?>;
+    var DELETE_LABEL = <?= Mage::helper('core')->jsonEncode($this->__('Delete')) ?>;
+
+    var wrap  = document.getElementById('catattr-options-wrap');
+    var body  = document.getElementById('catattr-options-body');
+    var addBtn = document.getElementById('catattr-add-option');
+    if (!wrap || !body) { return; }
+
+    var newSeq = 0;
+
+    function buildRow() {
+        var rowId = 'option_' + newSeq;
+        newSeq += 1;
+
+        var tr = document.createElement('tr');
+        tr.className = 'catattr-row';
+        tr.setAttribute('data-option-id', rowId);
+
+        STORE_IDS.forEach(function (sid) {
+            var td = document.createElement('td');
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'input-text' + (sid === 0 ? ' required-option' : '');
+            input.name = 'option[value][' + rowId + '][' + sid + ']';
+            input.value = '';
+            td.appendChild(input);
+            tr.appendChild(td);
+        });
+
+        var posTd = document.createElement('td');
+        posTd.className = 'a-center';
+        var pos = document.createElement('input');
+        pos.type = 'text';
+        pos.className = 'input-text catattr-position';
+        pos.name = 'option[order][' + rowId + ']';
+        pos.value = '0';
+        pos.style.width = '50px';
+        posTd.appendChild(pos);
+        tr.appendChild(posTd);
+
+        var defTd = document.createElement('td');
+        defTd.className = 'a-center';
+        var def = document.createElement('input');
+        def.type = DEFAULT_TYPE;
+        def.className = 'catattr-default';
+        def.name = 'default[]';
+        def.value = rowId;
+        defTd.appendChild(def);
+        tr.appendChild(defTd);
+
+        var actTd = document.createElement('td');
+        actTd.className = 'a-center';
+        var delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'scalable delete catattr-delete-row';
+        delBtn.innerHTML = '<span><span><span>' + DELETE_LABEL + '</span></span></span>';
+        actTd.appendChild(delBtn);
+        tr.appendChild(actTd);
+
+        return tr;
+    }
+
+    if (addBtn) {
+        addBtn.addEventListener('click', function () {
+            body.appendChild(buildRow());
+        });
+    }
+
+    body.addEventListener('click', function (e) {
+        var btn = e.target.closest('.catattr-delete-row');
+        if (!btn) { return; }
+        var tr = btn.closest('tr.catattr-row');
+        if (!tr) { return; }
+        var optionId = tr.getAttribute('data-option-id');
+        if (/^\d+$/.test(optionId)) {
+            // Existing option: flag for server-side deletion, hide the row.
+            var flag = tr.querySelector('.catattr-delete-flag');
+            if (flag) { flag.value = '1'; }
+            tr.style.display = 'none';
+        } else {
+            // New unsaved row: just remove it.
+            tr.parentNode.removeChild(tr);
+        }
+    });
+
+    // Show the options grid only for select / multiselect input types.
+    function syncVisibility() {
+        var sel = document.getElementById('frontend_input');
+        if (!sel) { return; }
+        var v = sel.value;
+        var show = (v === 'select' || v === 'multiselect');
+        // The whole "Manage Options" form row is the closest <tr> to our wrap.
+        var formRow = wrap.closest('tr');
+        if (formRow) {
+            formRow.style.display = show ? '' : 'none';
+        } else {
+            wrap.style.display = show ? '' : 'none';
+        }
+    }
+
+    var inputSelect = document.getElementById('frontend_input');
+    if (inputSelect) {
+        inputSelect.addEventListener('change', syncVisibility);
+    }
+    // Run once on load (defer to ensure the form fields exist).
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', syncVisibility);
+    } else {
+        syncVisibility();
+    }
+})();
+//]]>
+</script>
